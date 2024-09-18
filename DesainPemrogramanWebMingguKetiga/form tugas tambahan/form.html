@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        function validateForm() {
+            var name = document.forms["myForm"]["name"].value;
+            var address = document.forms["myForm"]["address"].value;
+            var birthday = document.forms["myForm"]["birthday"].value;
+
+            var gender = document.forms["myForm"]["gender"];
+            var isCheckedGender = false;
+            for (var i = 0; i < gender.length; i++) {
+                if (gender[i].checked) {
+                    isCheckedGender = true;
+                    break;
+                }
+            }
+
+            var hobby = document.forms["myForm"]["hobby"];
+            var isCheckedHobby = false;
+            for (var i = 0; i < hobby.length; i++) {
+                if (hobby[i].checked) {
+                    isCheckedHobby = true;
+                    break;
+                }
+            }
+
+            var pekerjaan = document.forms["myForm"]["pekerjaan"];
+            var isCheckedPekerjaan = false;
+            for (var i = 0; i < pekerjaan.length; i++) {
+                if (pekerjaan[i].checked) {
+                    isCheckedPekerjaan = true;
+                    break;
+                }
+            }
+
+            var checkbox = document.getElementById("consent").checked;
+
+            if (name === "" || address === "" || birthday === "" || !isCheckedGender || !isCheckedHobby || !isCheckedPekerjaan || !checkbox) {
+                if (!checkbox) {
+                    alert("Anda harus mencentang 'Check jika anda akan mengirimkan data ini'!");
+                } else {
+                    alert("Semua form wajib diisi!");
+                }
+                return false;  
+            }
+
+            alert("Form telah terisi!");
+
+            document.forms["myForm"].reset();
+
+            return false;  
+        }
+    </script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Form Validation</h2>
+        <form name="myForm" action="" onsubmit="return validateForm()" method="post" class="needs-validation" novalidate>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+                <div class="invalid-feedback">Please enter your name.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Alamat:</label>
+                <input type="text" class="form-control" id="address" name="address" required>
+                <div class="invalid-feedback">Please enter your address.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="birthday">Tanggal lahir:</label>
+                <input type="date" class="form-control" id="birthday" name="birthday" required>
+                <div class="invalid-feedback">Please select your birthday.</div>
+            </div>
+
+            <fieldset class="form-group">
+                <legend>Jenis kelamin:</legend>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="laki-laki" name="gender" value="laki-laki" required>
+                    <label class="form-check-label" for="laki-laki">Laki-laki</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="perempuan" name="gender" value="perempuan" required>
+                    <label class="form-check-label" for="perempuan">Perempuan</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-group">
+                <legend>Hobby:</legend>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="berenang" name="hobby" value="berenang" required>
+                    <label class="form-check-label" for="berenang">Berenang</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="berlari" name="hobby" value="berlari" required>
+                    <label class="form-check-label" for="berlari">Berlari</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="lain-lain" name="hobby" value="lain-lain" required>
+                    <label class="form-check-label" for="lain-lain">Lain-lain</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-group">
+                <legend>Pekerjaan:</legend>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="swasta" name="pekerjaan" value="swasta" required>
+                    <label class="form-check-label" for="swasta">Swasta</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="pns" name="pekerjaan" value="pns" required>
+                    <label class="form-check-label" for="pns">PNS</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="pekerjaan-lain" name="pekerjaan" value="lain-lain" required>
+                    <label class="form-check-label" for="pekerjaan-lain">Lain-lain</label>
+                </div>
+            </fieldset>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="consent" name="consent" value="Bike" required>
+                <label class="form-check-label" for="consent"> Check jika anda akan mengirimkan data ini</label>
+                <div class="invalid-feedback">You must check the consent checkbox.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Submit</button> 
+            <br>
+            <br>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        (function() {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+</body>
+</html>
