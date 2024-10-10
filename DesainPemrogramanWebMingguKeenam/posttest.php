@@ -22,6 +22,13 @@
         th {
             background-color: #f2f2f2;
         }
+        .main {
+            background-color: #d3d3d3;
+            padding: 20px;
+            margin: 20px auto;
+            width: 60%;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -61,24 +68,38 @@
     }
     $rataUmur = $totalUmur / $jumlahSiswa;
     ?>
+    <h2>Data siswa</h2>
+    <div class="main">
+        <p style="text-align: center">Klik untuk melihat tabel siswa</p>
 
-    <table>
-        <tr>
-            <th>Nama</th>
-            <th>Umur</th>
-            <th>Kelas</th>
-            <th>Alamat</th>
-        </tr>
-        <?php foreach ($siswa as $data) : ?>
-        <tr>
-            <td><?php echo $data['nama']; ?></td>
-            <td><?php echo $data['umur']; ?></td>
-            <td><?php echo $data['kelas']; ?></td>
-            <td><?php echo $data['alamat']; ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </table>
+        <div id="tableContainer" style="display:none;">
+            <table>
+                <tr>
+                    <th>Nama</th>
+                    <th>Umur</th>
+                    <th>Kelas</th>
+                    <th>Alamat</th>
+                </tr>
+                <?php foreach ($siswa as $data) : ?>
+                <tr>
+                    <td><?php echo $data['nama']; ?></td>
+                    <td><?php echo $data['umur']; ?></td>
+                    <td><?php echo $data['kelas']; ?></td>
+                    <td><?php echo $data['alamat']; ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </table>
 
-    <h2 style="text-align: center;">Rata-rata Umur Siswa: <?php echo number_format($rataUmur, 2)?></h2>
+            <h2 style="text-align: center;">Rata-rata Umur Siswa: <?php echo number_format($rataUmur, 2)?></h2>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $('.main').click(function(){
+                $('#tableContainer').slideToggle();
+            });
+        });
+    </script>
 </body>
 </html>
