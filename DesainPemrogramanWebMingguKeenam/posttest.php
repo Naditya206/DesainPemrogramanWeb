@@ -24,10 +24,6 @@
         }
         .main {
             background-color: #d3d3d3;
-            padding: 20px;
-            margin: 20px auto;
-            width: 60%;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -56,6 +52,18 @@
             'nama' => 'Anton',
             'umur' => '25',
             'kelas' => '15A',
+            'alamat' => 'Singosari',
+        ],
+        [
+            'nama' => 'Dion',
+            'umur' => '20',
+            'kelas' => '14A',
+            'alamat' => 'Singosari',
+        ],
+        [
+            'nama' => 'Erland',
+            'umur' => '21',
+            'kelas' => '13A',
             'alamat' => 'Dinoyo',
         ],
     ];
