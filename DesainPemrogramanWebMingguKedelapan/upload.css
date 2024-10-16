@@ -1,0 +1,53 @@
+.upload-form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.file-input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.file-input {
+    display: none; /* Menyembunyikan input file asli */
+}
+
+.file-label {
+    background: #3498db; /* Warna latar belakang label */
+    color: #fff; /* Warna teks */
+    padding: 10px 20px; /* Padding untuk label */
+    border-radius: 5px; /* Sudut bulat */
+    cursor: pointer; /* Menampilkan kursor pointer saat hover */
+}
+
+.upload-button {
+    background: #2ecc71; /* Warna latar belakang tombol upload */
+    color: #fff; /* Warna teks tombol */
+    padding: 10px 20px; /* Padding untuk tombol */
+    border: none; /* Menghilangkan border default */
+    border-radius: 5px; /* Sudut bulat */
+    cursor: pointer; /* Menampilkan kursor pointer saat hover */
+    opacity: 0.5; /* Opacity untuk membuat tampak pudar */
+}
+
+.upload-button:disabled {
+    background: #ccc; /* Mengubah warna saat tombol dinonaktifkan */
+    cursor: not-allowed; /* Mengubah gaya kursor saat dinonaktifkan */
+}
+
+.upload-status {
+    margin-top: 20px; /* Spasi atas untuk status */
+    font-weight: bold; /* Mengubah berat font status */
+}
