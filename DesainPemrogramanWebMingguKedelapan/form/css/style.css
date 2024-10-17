@@ -1,0 +1,122 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 50px;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input[type="text"], input[type="file"] {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+.preview img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Tambahan untuk alert */
+.alert {
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: white;
+}
+
+.alert.success {
+    background-color: #28a745;
+}
+
+.alert.error {
+    background-color: #dc3545;
+}
+
+.alert.warning {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.alert img {
+    margin-right: 10px;
+    vertical-align: middle;
+}
+.uploaded-images {
+    margin-top: 30px;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.image-item {
+    position: relative;
+    display: inline-block;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.uploaded-image {
+    max-width: 150px;
+    max-height: 150px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.delete-form {
+    display: inline;
+}
+
+.delete-btn {
+    padding: 5px 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
