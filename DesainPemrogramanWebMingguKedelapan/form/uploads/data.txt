@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 Naditya Prastia Andino|12 TKJ 2|20|SMK Negeri 2 Singosari|20246230034-1T9me.jpg
+=======
+Naditya Prastia Andino|12 TKJ 2|20|SMK Negeri 2 Singosari|IMG_20200604_155218 (1)_11zon.jpg
+>>>>>>> 4259c8e34cafbde7ea9271dfbff80b852bf008c5
