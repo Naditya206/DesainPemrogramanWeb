@@ -7,14 +7,16 @@ if (!isset($_SESSION['students'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_FILES['photo']) && isset($_FILES['document'])) {
-        $name = $_POST['name'];
-        $class = $_POST['class'];
-        $school = $_POST['school'];
+        $name = $_POST['name'] ?? '';
+        $class = $_POST['class'] ?? '';
+        $school = $_POST['school'] ?? '';
 
         $photoPath = 'uploads/' . basename($_FILES['photo']['name']);
-        $photoUploadSuccess = move_uploaded_file($_FILES['photo']['tmp_name'], $photoPath);
-
         $documentPath = 'uploads/' . basename($_FILES['document']['name']);
+        
+       
+        $photoUploadSuccess = move_uploaded_file($_FILES['photo']['tmp_name'], $photoPath);
+        
         $documentUploadSuccess = move_uploaded_file($_FILES['document']['tmp_name'], $documentPath);
 
         if ($photoUploadSuccess && $documentUploadSuccess) {
@@ -38,16 +40,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if (isset($_GET['delete'])) {
     $index = intval($_GET['delete']);
 
-    if (file_exists($_SESSION['students'][$index]['photo'])) {
-        unlink($_SESSION['students'][$index]['photo']); 
-    }
-    if (file_exists($_SESSION['students'][$index]['document'])) {
-        unlink($_SESSION['students'][$index]['document']); 
-    }
+    if (isset($_SESSION['students'][$index])) {
+        if (file_exists($_SESSION['students'][$index]['photo'])) {
+            unlink($_SESSION['students'][$index]['photo']); 
+        }
+        if (file_exists($_SESSION['students'][$index]['document'])) {
+            unlink($_SESSION['students'][$index]['document']); 
+        }
 
-    unset($_SESSION['students'][$index]);
-    $_SESSION['students'] = array_values($_SESSION['students']); 
-    echo json_encode($_SESSION['students']);
+        unset($_SESSION['students'][$index]);
+        $_SESSION['students'] = array_values($_SESSION['students']); 
+        echo json_encode($_SESSION['students']);
+    } else {
+        echo json_encode(['error' => 'Data tidak ditemukan.']);
+    }
     exit;
 }
 ?>
@@ -81,6 +87,10 @@ if (isset($_GET['delete'])) {
                 <input type="text" name="class" id="class" placeholder="Masukkan Kelas" required>
             </div>
             <div class="input-field">
+                <label for="school">Sekolah</label>
+                <input type="text" name="school" id="school" placeholder="Masukkan Sekolah" required>
+            </div>
+            <div class="input-field">
                 <label for="photo">Foto</label>
                 <input type="file" name="photo" id="photo" accept="image/*" required>
             </div>
@@ -96,6 +106,7 @@ if (isset($_GET['delete'])) {
                     <th>Foto</th>
                     <th>Nama</th>
                     <th>Kelas</th>
+                    <th>Sekolah</th>
                     <th>Dokumen</th>
                     <th>Aksi</th>
                 </tr>
@@ -108,6 +119,7 @@ if (isset($_GET['delete'])) {
                     <td><img src=\"{$student['photo']}\" alt=\"Foto\" width=\"50\"></td>
                     <td>{$student['name']}</td>
                     <td>{$student['class']}</td>
+                    <td>{$student['school']}</td>
                     <td><a href=\"{$student['document']}\" target=\"_blank\">{$documentName}</a></td>
                     <td>
                         <button onclick=\"deleteStudent({$index})\">Hapus</button>
@@ -118,5 +130,61 @@ if (isset($_GET['delete'])) {
         </tbody>
         </table>
     </div>
+    <script>
+        document.getElementById('studentForm').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            
+            var formData = new FormData(this);
+
+            fetch('', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('studentTable').getElementsByTagName('tbody')[0];
+                tableBody.innerHTML = ''; 
+
+                data.forEach((student, index) => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td><img src="${student.photo}" alt="Foto" width="50"></td>
+                        <td>${student.name}</td>
+                        <td>${student.class}</td>
+                        <td>${student.school}</td>
+                        <td><a href="${student.document}" target="_blank">${student.document.split('/').pop()}</a></td>
+                        <td><button onclick="deleteStudent(${index})">Hapus</button></td>
+                    `;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        function deleteStudent(index) {
+            fetch(`?delete=${index}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('studentTable').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = ''; 
+
+                    data.forEach((student, index) => {
+                        const row = tableBody.insertRow();
+                        row.innerHTML = `
+                            <td><img src="${student.photo}" alt="Foto" width="50"></td>
+                            <td>${student.name}</td>
+                            <td>${student.class}</td>
+                            <td>${student.school}</td>
+                            <td><a href="${student.document}" target="_blank">${student.document.split('/').pop()}</a></td>
+                            <td><button onclick="deleteStudent(${index})">Hapus</button></td>
+                        `;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
 </body>
 </html>
