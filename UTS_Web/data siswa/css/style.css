@@ -9,12 +9,17 @@
 }
 
 body {
+    margin: 0; /* Hapus margin pada body */
+    padding: 0; /* Hapus padding pada body */
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column; /* Tetap di sini untuk tata letak */
+    align-items: center; /* Pusatkan secara horizontal */
+    justify-content: flex-start; /* Awal dari atas */
     background: #f4f4f4;
+    width: auto;
 }
+
 
 .container {
     position: relative;
@@ -28,12 +33,37 @@ body {
 }
 
 header {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
+    width: 100%; /* Pastikan header memenuhi lebar halaman */
 }
+
+nav {
+    width: 100%; /* Pastikan nav memenuhi lebar halaman */
+    background-color: #029275; /* Warna latar belakang navbar */
+}
+
+.navbar {
+    list-style: none;
+    display: flex;
+    justify-content: flex-end; /* Pindahkan teks ke sebelah kanan */
+    padding: 10px 20px; /* Beri sedikit padding untuk memperbaiki tampilan */
+    margin-bottom: 20px; /* Hapus margin agar navbar tidak terpotong */
+}
+
+.navbar li {
+    margin: 0 15px; /* Jarak antar item navbar */
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s; /* Tambahkan transisi untuk efek hover */
+}
+
+.navbar a:hover {
+    color: #fffb00; /* Ubah warna saat hover */
+}
+
 
 .input-field {
     margin-bottom: 20px;
@@ -67,7 +97,7 @@ button {
 }
 
 button {
-    background-color: #009879;
+    background-color: #029275;
     color: white;
     cursor: pointer;
     font-size: 16px;
@@ -76,7 +106,7 @@ button {
 }
 
 button:hover {
-    background-color: #009879;  
+    background-color: #007965;
 }
 
 button:active {
@@ -95,6 +125,7 @@ table, th, td {
 
 th, td {
     padding: 12px;
+    text-align: center;
 }
 
 th {
@@ -103,7 +134,18 @@ th {
 }
 
 td img {
-    width: 100px; /* Adjust the size as needed */
-    height: 120px; /* Adjust the size as needed */
-    object-fit: cover; /* Maintain aspect ratio */
+    width: 100px; 
+    height: 120px; 
+    object-fit: cover; 
+}
+
+footer {
+    text-align: center;
+    padding: 25px 0;
+    background: #029275;
+    color: white;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    margin-top: 20px;
 }

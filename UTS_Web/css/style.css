@@ -71,7 +71,6 @@
 
     .catalog {
         display: flex;
-        flex-wrap: wrap;
     }
 
     .catalog-item {
@@ -82,6 +81,8 @@
         border-radius: 8px;
         text-align: center;
         transition: transform 0.2s;
+        width: 500px; 
+        height: 300px;
     }
 
     .catalog-item:hover {
@@ -89,13 +90,16 @@
     }
 
     .catalog-item img {
-        max-width: 100%;
-        border-radius: 8px;
+        width: 100%;
+        height: 100%; 
+        object-fit: cover; 
     }
 
     .catalog-text {
         margin-top: 5px;
         font-weight: bold;
+        color: #000;
+        text-decoration: none ;
     }
 
     /* Notifications */
@@ -120,7 +124,7 @@
     /* Footer */
     footer {
         text-align: center;
-        padding: 10px 0;
+        padding: 25px 0;
         background: #029275;
         color: white;
         position: relative;

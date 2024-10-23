@@ -1,60 +1,56 @@
 <?php
 session_start();
 
-// Array untuk menyimpan data siswa
 if (!isset($_SESSION['students'])) {
     $_SESSION['students'] = [];
 }
 
-// Proses upload
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_FILES['photo']) && isset($_FILES['document'])) {
         $name = $_POST['name'];
         $class = $_POST['class'];
         $school = $_POST['school'];
 
-        // Menangani upload foto
         $photoPath = 'uploads/' . basename($_FILES['photo']['name']);
-        move_uploaded_file($_FILES['photo']['tmp_name'], $photoPath);
+        $photoUploadSuccess = move_uploaded_file($_FILES['photo']['tmp_name'], $photoPath);
 
-        // Menangani upload dokumen
         $documentPath = 'uploads/' . basename($_FILES['document']['name']);
-        move_uploaded_file($_FILES['document']['tmp_name'], $documentPath);
+        $documentUploadSuccess = move_uploaded_file($_FILES['document']['tmp_name'], $documentPath);
 
-        // Menyimpan data siswa ke dalam session
-        $_SESSION['students'][] = [
-            'name' => $name,
-            'class' => $class,
-            'school' => $school,
-            'photo' => $photoPath,
-            'document' => $documentPath,
-        ];
+        if ($photoUploadSuccess && $documentUploadSuccess) {
+            $_SESSION['students'][] = [
+                'name' => $name,
+                'class' => $class,
+                'school' => $school,
+                'photo' => $photoPath,
+                'document' => $documentPath,
+            ];
+            echo json_encode($_SESSION['students']);
+        } else {
+            echo json_encode(['error' => 'Gagal meng-upload file.']);
+        }
+        exit;
+    } else {
+        echo json_encode(['error' => 'File tidak ditemukan.']);
     }
-    // Mengirim kembali data siswa sebagai JSON
-    echo json_encode($_SESSION['students']);
-    exit;
 }
 
-// Menghapus data siswa
 if (isset($_GET['delete'])) {
     $index = intval($_GET['delete']);
 
-    // Menghapus file yang terkait
     if (file_exists($_SESSION['students'][$index]['photo'])) {
-        unlink($_SESSION['students'][$index]['photo']); // Hapus foto
+        unlink($_SESSION['students'][$index]['photo']); 
     }
     if (file_exists($_SESSION['students'][$index]['document'])) {
-        unlink($_SESSION['students'][$index]['document']); // Hapus dokumen
+        unlink($_SESSION['students'][$index]['document']); 
     }
 
-    // Hapus data dari session
     unset($_SESSION['students'][$index]);
-    $_SESSION['students'] = array_values($_SESSION['students']); // Reindex array
+    $_SESSION['students'] = array_values($_SESSION['students']); 
     echo json_encode($_SESSION['students']);
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,10 +59,18 @@ if (isset($_GET['delete'])) {
     <title>Form Upload Data Siswa</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <script src="script.js"></script>
 </head>
 <body>
+    <header>
+        <nav>
+            <ul class="navbar">
+                <li><a href="../index.php">Kembali</a></li>
+            </ul>
+        </nav>
+    </header>
     <div class="container">
-        <header>Form Upload Data Siswa</header>
+        <h2>Form Upload Data Siswa</h2>
         <form id="studentForm" enctype="multipart/form-data">
             <div class="input-field">
                 <label for="name">Nama</label>
@@ -75,10 +79,6 @@ if (isset($_GET['delete'])) {
             <div class="input-field">
                 <label for="class">Kelas</label>
                 <input type="text" name="class" id="class" placeholder="Masukkan Kelas" required>
-            </div>
-            <div class="input-field">
-                <label for="school">Sekolah</label>
-                <input type="text" name="school" id="school" placeholder="Masukkan Sekolah" required>
             </div>
             <div class="input-field">
                 <label for="photo">Foto</label>
@@ -96,21 +96,18 @@ if (isset($_GET['delete'])) {
                     <th>Foto</th>
                     <th>Nama</th>
                     <th>Kelas</th>
-                    <th>Nama Sekolah</th>
                     <th>Dokumen</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
             <?php
-            // Tampilkan data siswa yang sudah ada di sesi
             foreach ($_SESSION['students'] as $index => $student) {
-                $documentName = basename($student['document']); // Ambil nama dokumen
+                $documentName = basename($student['document']); 
                 echo "<tr>
                     <td><img src=\"{$student['photo']}\" alt=\"Foto\" width=\"50\"></td>
                     <td>{$student['name']}</td>
                     <td>{$student['class']}</td>
-                    <td>{$student['school']}</td>
                     <td><a href=\"{$student['document']}\" target=\"_blank\">{$documentName}</a></td>
                     <td>
                         <button onclick=\"deleteStudent({$index})\">Hapus</button>
@@ -121,6 +118,5 @@ if (isset($_GET['delete'])) {
         </tbody>
         </table>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>

@@ -1,49 +1,83 @@
 <?php
 session_start();
 
-// Inisialisasi data siswa jika belum ada
-if (!isset($_SESSION['siswa'])) {
-    $_SESSION['siswa'] = [];
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+
+if (!isset($_SESSION['students'])) {
+    $_SESSION['students'] = [];
 }
 
-// Tambah data siswa
-if (isset($_POST['submit'])) {
-    $nama = $_POST['nama'];
-    $no_absen = $_POST['no_absen'];
-    $kelas = $_POST['kelas'];
-    $nilai = $_POST['nilai'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_FILES['photo']) && isset($_FILES['document'])) {
+        $name = $_POST['name'];
+        $class = $_POST['class'];
+        $school = $_POST['school'];
 
-    // Tambah data ke array session
-    $_SESSION['siswa'][] = [
-        'nama' => $nama,
-        'no_absen' => $no_absen,
-        'kelas' => $kelas,
-        'nilai' => $nilai
-    ];
+        
+        $photoPath = 'uploads/' . basename($_FILES['photo']['name']);
+        $photoUploadSuccess = move_uploaded_file($_FILES['photo']['tmp_name'], $photoPath);
+
+        
+        $documentPath = 'uploads/' . basename($_FILES['document']['name']);
+        $documentUploadSuccess = move_uploaded_file($_FILES['document']['tmp_name'], $documentPath);
+
+        if ($photoUploadSuccess && $documentUploadSuccess) {
+            
+            $_SESSION['students'][] = [
+                'name' => $name,
+                'class' => $class,
+                'school' => $school,
+                'photo' => $photoPath,
+                'document' => $documentPath,
+                'score' => null 
+            ];
+            echo json_encode($_SESSION['students']);
+        } else {
+            echo json_encode(['error' => 'Gagal meng-upload file.']);
+        }
+        exit;
+    } else {
+        echo json_encode(['error' => 'File tidak ditemukan.']);
+    }
 }
 
-// Hapus data siswa
-if (isset($_GET['delete'])) {
-    $index = $_GET['delete'];
-    unset($_SESSION['siswa'][$index]);
-    $_SESSION['siswa'] = array_values($_SESSION['siswa']); // Reset index array
+
+if (isset($_POST['submit_scores'])) {
+    $validScores = true; 
+
+    foreach ($_POST['scores'] as $index => $score) {
+        if (isset($_SESSION['students'][$index])) {
+            
+            if (empty($score) || !is_numeric($score)) {
+                $validScores = false; 
+                continue; 
+            }
+            $_SESSION['students'][$index]['score'] = floatval($score); 
+        }
+    }
+
+    if (!$validScores) {
+        
+        $_SESSION['error_message'] = "Semua nilai harus diisi dan berupa angka.";
+    }
+
+    header('Location: ' . $_SERVER['PHP_SELF']); 
+    exit;
 }
 
-// Edit data siswa
-if (isset($_POST['update'])) {
-    $index = $_POST['index'];
-    $nama = $_POST['nama'];
-    $no_absen = $_POST['no_absen'];
-    $kelas = $_POST['kelas'];
-    $nilai = $_POST['nilai'];
 
-    // Update data di array session
-    $_SESSION['siswa'][$index] = [
-        'nama' => $nama,
-        'no_absen' => $no_absen,
-        'kelas' => $kelas,
-        'nilai' => $nilai
-    ];
+$averageScore = 0;
+if (!empty($_SESSION['students'])) {
+    $totalScore = 0;
+    $count = 0;
+
+    foreach ($_SESSION['students'] as $student) {
+        if (isset($student['score']) && $student['score'] !== null) {
+            $totalScore += $student['score'];
+            $count++;
+        }
+    }
+    $averageScore = $count > 0 ? $totalScore / $count : 0; 
 }
 ?>
 
@@ -52,79 +86,83 @@ if (isset($_POST['update'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Nilai Siswa</title>
+    <title>Form Input Nilai Siswa</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            
+            $('input[type="number"]').on('keydown', function(e) {
+                if ($.inArray(e.key, ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Enter']) !== -1 ||
+                    (e.key >= '0' && e.key <= '9') ||
+                    (e.key === '.' && $(this).val().indexOf('.') === -1)) {
+                    return; // Izinkan
+                }
+                e.preventDefault(); 
+            });
+
+            
+            $('#averageScoreButton').on('click', function() {
+                let total = 0;
+                let count = 0;
+                $('input[name^="scores"]').each(function() {
+                    let value = parseFloat($(this).val());
+                    if (!isNaN(value)) {
+                        total += value;
+                        count++;
+                    }
+                });
+                let average = count > 0 ? (total / count).toFixed(2) : 0; 
+                $('#averageScoreDisplay').text('Rata-rata Nilai: ' + average); 
+            });
+        });
+    </script>
 </head>
 <body>
-
-<div class="container">
-    <h2>Daftar Nilai Siswa</h2>
-
-    <!-- Form tambah/edit data siswa -->
-    <form method="POST" action="" class="form">
-        <div class="form-group">
-            <label for="nama">Nama:</label>
-            <input type="text" id="nama" name="nama" required>
-        </div>
+    <header>
+        <nav>
+            <ul class="navbar">
+                <li><a href="../index.php">Kembali</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <h2>Form Input Nilai Siswa</h2>
+        <?php
         
-        <div class="form-group">
-            <label for="no_absen">No Absen:</label>
-            <input type="number" id="no_absen" name="no_absen" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="kelas">Kelas:</label>
-            <select id="kelas" name="kelas" required>
-                <option value="">Pilih Kelas</option>
-                <option value="TKJ 1">TKJ 1</option>
-                <option value="TKJ 2">TKJ 2</option>
-                <option value="TKJ 3">TKJ 3</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="nilai">Nilai:</label>
-            <input type="number" id="nilai" name="nilai" required>
-        </div>
-
-        <div class="form-actions">
-            <!-- Untuk edit data -->
-            <?php if (isset($_GET['edit'])): ?>
-                <input type="hidden" name="index" value="<?= $_GET['edit'] ?>">
-                <button type="submit" name="update" class="btn edit">Update Data</button>
-            <?php else: ?>
-                <button type="submit" name="submit" class="btn">Tambah Data</button>
-            <?php endif; ?>
-        </div>
-    </form>
-
-    <!-- Tabel data siswa -->
-    <table class="styled-table">
-        <thead>
-            <tr>
-                <th>No Absen</th>
-                <th>Nama</th>
-                <th>Kelas</th>
-                <th>Nilai</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($_SESSION['siswa'] as $index => $siswa): ?>
-                <tr>
-                    <td><?= htmlspecialchars($siswa['no_absen']) ?></td>
-                    <td><?= htmlspecialchars($siswa['nama']) ?></td>
-                    <td><?= htmlspecialchars($siswa['kelas']) ?></td>
-                    <td><?= htmlspecialchars($siswa['nilai']) ?></td>
-                    <td>
-                        <a href="?edit=<?= $index ?>" class="btn edit">Edit</a>
-                        <a href="?delete=<?= $index ?>" class="btn delete" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-</div>
-
+        if (isset($_SESSION['error_message'])) {
+            echo "<div style='color: red;'>{$_SESSION['error_message']}</div>";
+            unset($_SESSION['error_message']); 
+        }
+        ?>
+        <form method="POST" action="">
+            <table id="studentTable">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Kelas</th>
+                        <th>Nilai</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php
+                foreach ($_SESSION['students'] as $index => $student) {
+                    $scoreValue = $student['score'] ?? ''; 
+                    echo "<tr>
+                        <td>{$student['name']}</td>
+                        <td>{$student['class']}</td>
+                        <td>
+                            <input type='number' name='scores[{$index}]' value='{$scoreValue}' placeholder='Masukkan Nilai' required>
+                        </td>
+                    </tr>";
+                }
+                ?>
+                </tbody>
+            </table>
+            <button type="submit" name="submit_scores">Simpan Semua Nilai</button>
+            <div id="averageScoreDisplay" style="margin-top: 10px; font-weight: bold;">Rata-rata Nilai: <?php echo number_format($averageScore, 2); ?></div>
+        </form>
+    </div>
 </body>
 </html>

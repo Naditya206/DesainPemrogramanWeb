@@ -4,28 +4,26 @@ if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Contoh username dan password yang valid
     $valid_username = "adit";
     $valid_password = "adit123";
 
     if ($username === $valid_username && $password === $valid_password) {
         $_SESSION['username'] = $username;
 
-        // Set cookie jika 'remember me' di-check
+
         if (isset($_POST['remember'])) {
-            setcookie('username', $username, time() + (86400 * 30), "/"); // Cookie berlaku selama 30 hari
+            setcookie('username', $username, time() + (86400 * 30), "/"); 
         }
 
-        // Arahkan ke home.html setelah login berhasil
-        header("Location: home.php");
+        header("Location: index.php");
         exit();
     } else {
         $error = "Username atau password salah!";
     }
 
     session_start();
-    session_destroy(); // Hancurkan sesi
-    header("Location: login.php"); // Arahkan kembali ke halaman login
+    session_destroy(); 
+    header("Location: login.php"); 
     exit();
 }
 ?>
@@ -51,8 +49,7 @@ if (isset($_POST['login'])) {
                 <input type="password" name="password" id="password" required>
             </div>
             <div class="input-group">
-                <input type="checkbox" name="remember" id="remember">
-                <label for="remember">Remember Me</label>
+                <input type="checkbox" name="remember" id="remember">Remember Me
             </div>
             <?php if (isset($error)) { echo "<p class='error'>$error</p>"; } ?>
             <div class="input-group">

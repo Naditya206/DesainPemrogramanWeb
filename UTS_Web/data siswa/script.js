@@ -1,41 +1,83 @@
-document.getElementById('studentForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+document.getElementById('studentForm').addEventListener('submit', function(event) {
+    event.preventDefault(); 
 
-    let formData = new FormData(this);
+    showLoading(true);
 
-    fetch('index.php', {
+    
+    const formData = new FormData(this);
+
+    
+    fetch('', {
         method: 'POST',
-        body: formData,
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
-        displayStudents(data);
-        this.reset(); // Reset form after submission
+        if (data.error) {
+            showNotification(data.error); 
+        } else {
+            
+            updateStudentTable(data);
+            showNotification('Data berhasil ditambahkan!'); 
+            this.reset(); 
+        }
+    })
+    .catch(error => console.error('Error:', error))
+    .finally(() => {
+        
+        showLoading(false);
     });
 });
 
-function displayStudents(students) {
-    const tbody = document.querySelector('#studentTable tbody');
-    tbody.innerHTML = ''; // Clear previous data
+// Fungsi untuk memperbarui tabel
+function updateStudentTable(students) {
+    const tableBody = document.getElementById('studentTable').querySelector('tbody');
+    tableBody.innerHTML = ''; 
 
     students.forEach((student, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><img src="${student.photo}" alt="Foto"></td>
-            <td>${student.name}</td>
-            <td>${student.class}</td>
-            <td>${student.school}</td>
-            <td><a href="${student.document}" target="_blank">Lihat</a></td>
-            <td>
-                <button onclick="deleteStudent(${index})">Hapus</button>
-            </td>
-        `;
-        tbody.appendChild(row);
+        const documentName = student.document.split('/').pop(); 
+        const row = `
+            <tr>
+                <td><img src="${student.photo}" alt="Foto" width="50"></td>
+                <td>${student.name}</td>
+                <td>${student.class}</td>
+                <td><a href="${student.document}" target="_blank">${documentName}</a></td>
+                <td>
+                    <button onclick="deleteStudent(${index})">Hapus</button>
+                </td>
+            </tr>`;
+        tableBody.innerHTML += row;
     });
 }
 
+// Fungsi untuk menghapus siswa
 function deleteStudent(index) {
-    fetch(`index.php?delete=${index}`)
-    .then(response => response.json())
-    .then(data => displayStudents(data));
+    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+        fetch(`?delete=${index}`, {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            updateStudentTable(data); 
+            showNotification('Data berhasil dihapus!'); 
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+
+// Fungsi untuk menampilkan notifikasi
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+function showLoading(isLoading) {
+    
 }
